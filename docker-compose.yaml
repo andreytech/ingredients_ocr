@@ -6,19 +6,19 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - FLASK_DEBUG='${FLASK_DEBUG:-0}'
+      - FLASK_DEBUG=${FLASK_DEBUG:-False}
       ## Позволяет отслеживать процесс работы приложения в командной строке
-      - PYTHONUNBUFFERED='${PYTHONUNBUFFERED:-False}'
+      - PYTHONUNBUFFERED=${PYTHONUNBUFFERED:-False}
     # restart: on-failure
     volumes:
       - .:/app
     networks:
-      - ingredients_sail
+      - ingredients_backend_sail
     # Открываем порт в контейнер
     # Порт, который будет смотреть наружу : порт который используется внутри контейнера
     ports:
       - "8000:8000"
     command: flask run
 networks:
-  ingredients_sail:
+  ingredients_backend_sail:
     external: true
