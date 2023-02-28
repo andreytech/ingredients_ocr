@@ -1,0 +1,7 @@
+flask
+opencv-python==4.5.5.64
+easyocr
+tensorflow-cpu
+keras-ocr
+thefuzz
+flask_mysqldb
