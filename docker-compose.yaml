@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - FLASK_DEBUG=1
+      - FLASK_DEBUG='${FLASK_DEBUG:-0}'
       ## Позволяет отслеживать процесс работы приложения в командной строке
-      - PYTHONUNBUFFERED=True
+      - PYTHONUNBUFFERED='${PYTHONUNBUFFERED:-False}'
     # restart: on-failure
     volumes:
       - .:/app
