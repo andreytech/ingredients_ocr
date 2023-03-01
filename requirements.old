@@ -1,0 +1,8 @@
+flask
+flask_mysqldb
+thefuzz[speedup]
+opencv-python==4.5.5.64
+easyocr
+tensorflow-cpu
+keras-ocr
+

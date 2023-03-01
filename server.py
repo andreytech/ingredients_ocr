@@ -5,10 +5,13 @@ from werkzeug.utils import secure_filename
 from thefuzz import fuzz, process, StringMatcher
 import sys
 import re
+# import cv2 
+import pytesseract
 
-import easyocr
-import matplotlib.pyplot as plt
-import keras_ocr
+
+# import easyocr
+# import matplotlib.pyplot as plt
+# import keras_ocr
 
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
@@ -31,6 +34,12 @@ if not os.path.exists(FILE_DIR):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def processTesseract(filename):
+    # img = cv2.imread(filename)
+
+    custom_config = r'--oem 3 --psm 11'
+    return pytesseract.image_to_string(filename, lang='eng', config=custom_config)
 
 def processEasyOCR(filename):
     easyReader = easyocr.Reader(['en', 'ru'], True, None, False)
@@ -96,12 +105,6 @@ def upload_file():
     filename = FILE_DIR + '/' + secure_filename(file.filename)
     file.save(filename)
 
-    output = ''
-    
-    # EasyOCR
-    ocrText = processEasyOCR(filename)
-    ocrText = re.sub('[^0-9a-zA-Z]+', ' ', ocrText.lower())
-
     cursor=mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("select names from ingredients")
 
@@ -109,6 +112,19 @@ def upload_file():
     ingredientsList = [row['names'].lower() for row in data]
 
     print(ingredientsList, file=sys.stdout)
+
+    output = ''
+    
+    # KerasOCR
+    # output = output + processKerasOCR(filename)
+
+    # EasyOCR
+    # ocrText = processEasyOCR(filename)
+
+    # Tesseract
+    ocrText = processTesseract(filename)
+    ocrText = re.sub('[^0-9a-zA-Z]+', ' ', ocrText.lower())
+
     print(ocrText, file=sys.stdout)
 
     result = process.extractBests(ocrText.lower(), ingredientsList, limit=None, scorer=fuzz.token_set_ratio, score_cutoff=50)
@@ -116,11 +132,3 @@ def upload_file():
     ingredientsResult = [row[0] for row in result]
 
     return jsonify({"ingredients": ingredientsResult})
-
-
-    # KerasOCR
-    # output = output + processKerasOCR(filename)
-
-    # return jsonify({"text": output})
-    return output
-          
