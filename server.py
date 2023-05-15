@@ -7,6 +7,7 @@ import sys
 import re
 # import cv2 
 import pytesseract
+from ocr_test import ocr_test_bp
 
 
 # import easyocr
@@ -27,6 +28,9 @@ app.config['MYSQL_PASSWORD'] = 'password'
 app.config['MYSQL_DB'] = 'ingredients'
 
 mysql = MySQL(app)
+
+app.register_blueprint(ocr_test_bp)
+
 
 if not os.path.exists(FILE_DIR):
     os.makedirs(FILE_DIR)
